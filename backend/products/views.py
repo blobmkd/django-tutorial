@@ -4,11 +4,15 @@ from rest_framework.response import Response
 from .models import Product
 from .serializers import ProductSerializer
 from .permissions import IsStaffEditorPermission
+from api.authentication import TokenAuthentication
 
 class ProductListCreateAPIView(generics.ListCreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-    authentication_classes = [authentication.SessionAuthentication]
+    authentication_classes = [
+        authentication.SessionAuthentication,
+        TokenAuthentication
+    ]
     permission_classes = [permissions.IsAdminUser, IsStaffEditorPermission]
 
     def perform_create(self, serializer):
