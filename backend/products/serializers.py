@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from rest_framework.reverse import reverse
+
 from .models import Product
+from .validators import validate_title
 
 class ProductSerializer(serializers.ModelSerializer):
     my_discount = serializers.SerializerMethodField(read_only = True)
@@ -9,6 +11,8 @@ class ProductSerializer(serializers.ModelSerializer):
         view_name = 'product-detail',
         lookup_field = 'pk'
         )
+    
+    title = serializers.CharField(validators = [validate_title])
 
     class Meta:
         model = Product
@@ -21,6 +25,13 @@ class ProductSerializer(serializers.ModelSerializer):
             'sale_price',
             'my_discount'
         ]
+    
+    # def validate_title(self, value):
+    #     qs = Product.objects.filter(title__iexact = value) # checks if the title that we are passing in exists on our project somewhere
+    #     # iexact - means case insensitive search per queryset
+    #     if qs.exists():
+    #         raise serializers.ValidationError(f"{value} is already a product name.")
+    #     return value
     
     def get_edit_url(self, obj):
         request = self.context.get('request')
